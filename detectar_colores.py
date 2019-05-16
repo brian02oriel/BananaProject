@@ -30,7 +30,7 @@ while(1):
 
     #Unir las dos mascaras con el comando cv2.add()
     #mask = cv2.add(mascara_amarillo, mascara_verde)
-    cnts = cv2.findContours(mascara_amarillo.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[-2]
+    cnts = cv2.findContours(mascara_amarillo.copy(), cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)[-2]
 
     cv2.drawContours(img, cnts, 0, (0, 0, 255), 2)
 
