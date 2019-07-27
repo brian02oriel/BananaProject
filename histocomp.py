@@ -52,11 +52,4 @@ else:
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-#for compare_method in range(4):
-#    base_base = cv2.compareHist(hist_base, hist_base, compare_method)
-#    base_half = cv2.compareHist(hist_base, hist_half_down, compare_method)
-#    base_test1 = cv2.compareHist(hist_base, hist_test1, compare_method)
-
-#    print('Method:', compare_method, 'Perfect, Base-Half, Base-Test(1): ',\
-#          base_base, '/', base_half, '/', base_test1)
 
