@@ -2,71 +2,34 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-bnaMadura = cv2.imread('images/alfa.jpg')
-cv2.imshow('banana madura', bnaMadura)
-#cv2.waitKey(0)
+img = cv2.imread('images/apple.jpg')
 
-#bnaVerde = cv2.imread('images/banano_v.jpg')
-#cv2.imshow('banana verde', bnaVerde)
-#cv2.waitKey(0)
+cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+cv2.resizeWindow('image', 600,600)
 
-template = cv2.imread('images/banano_v.jpg')
-#cv2.imshow('banano base', template)
-#cv2.waitKey(0)
+cv2.imshow('image',  img)
 
-#cv2.destroyAllWindows()
-bnaMadura = cv2.cvtColor(bnaMadura, cv2.COLOR_BGR2HSV)
+if img is None:
+    print('Could not open or find the images')
+    exit(0)
+
+# img  = cv2.cvtColor( img, cv2.COLOR_BGR2HSV)
 
 def histo(img):
     color = ('b', 'g', 'r')
+    plt.figure()
+
     for i, c in enumerate(color):
-        print(c)
         hist = cv2.calcHist([img],[i],None,[256],[0,256])
+        plt.subplot(221 + i)
+        plt.grid(True)
         plt.plot(hist, color = c)
         plt.xlim([0, 256])
     
     plt.show()
-    cv2.waitKey(0)
-
-def matching(template, img):
-    template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-    target_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    ret, thresh1 = cv2.threshold(template_gray, 127, 255, 0)
-    ret, thresh2 = cv2.threshold(target_gray, 127, 255, 0)
-
-    _, contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
-    print(contours)
-    if not contours:
-        print("Unexactly")
-        exit(0)
-    else:
-        sorted_contours = sorted(contours, key=cv2.contourArea, reverse=True)
-        template_contour = contours[1]
-        for c in contours:
-    # cv2.matchShapes(contour1, contour2, method number, parameter)
-            match = cv2.matchShapes(template_contour, c, 2, 0.0)
-            print("Match")
-            print(match)
-            if match < 0.15:
-                closest_contour = c
-            else:
-                closest_contour = []
-        
-        print("Closest Contours")
-        print(closest_contour)
-        cv2.drawContours(img, [closest_contour], -1, (0, 255, 0), 3)
-        cv2.imshow('Output', img)
-
-    #_, contours, hierarchy = cv2.findContours(thresh2, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
-    #print("Contours")
-    #print(contours)
-
-    
 
 
-histo(bnaMadura)
-#matching(template, bnaMadura)
+histo( img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-#histo(bnaVerde)
+
