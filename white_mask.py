@@ -26,12 +26,17 @@ mascara_verde_1 = cv2.morphologyEx(mascara_verde_1, cv2.MORPH_OPEN, kernel)
 #Unir las dos mascaras con el comando cv2.add()
 
 cnts = cv2.findContours(mascara_verde_1.copy(), cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)[-2]
+contourned = cv2.drawContours(img.copy(), cnts, 0, (0, 0, 255), 2)
 
-
-cv2.drawContours(img, cnts, 0, (0, 0, 255), 2)
+mask = np.zeros_like(img) # Create mask where white is what we want, black otherwise
+cv2.drawContours(mask, cnts, 0, (255, 255, 255), -1) # Draw filled contour in mask
+out = np.zeros_like(img) # Extract out the object and place into output image
+out[mask == 255] = img[mask == 255]
 
 #Mostrar la mascara final y la imagen
 cv2.imshow('mascaras', mascara_verde_1)
 cv2.imshow('Camara', img)
+cv2.imshow('Contourned', contourned)
+cv2.imshow('Cropped', out)
 cv2.waitKey(0)
 cv2.destroyAllWindows()

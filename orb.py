@@ -77,7 +77,7 @@ print("Threshold: ", threshold)
 # If matches exceed our threshold then object has been detected
 if matches > threshold:
     cv2.rectangle(image1, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,255,0), 3)
-    cv2.putText(image1,'Object Found',(100,100), cv2.FONT_HERSHEY_COMPLEX, 2 ,(0,255,0), 2)
+    cv2.putText(image1,'Object Found',(top_left_x + 50 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,255,0), 2)
     
 cv2.imshow('Object Detector using ORB', image1)
     
