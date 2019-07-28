@@ -3,7 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 # Load image then grayscale
-image = cv2.imread('images/banano_v.jpg')
+image = cv2.imread('images/banano_v2.jpg')
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 # Show original Image
