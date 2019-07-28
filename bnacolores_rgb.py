@@ -11,11 +11,11 @@ if img is None:
 img = imutils.resize(img, width = 600)
 #hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-verde_bajos_1 = np.array([2, 67, 0], dtype=np.uint8)
-verde_altos_1 = np.array([9, 255, 0], dtype=np.uint8)
+verde_bajos_1 = np.array([0, 51, 23], dtype=np.uint8)
+verde_altos_1 = np.array([0, 255, 115], dtype=np.uint8)
 
-verde_bajos_2 = np.array([0, 90, 72], dtype=np.uint8)
-verde_altos_2 = np.array([0, 255, 205], dtype=np.uint8)
+verde_bajos_2 = np.array([0, 51, 38], dtype=np.uint8)
+verde_altos_2 = np.array([0, 255, 239], dtype=np.uint8)
 
 #amarillo_bajos = np.array([16,76,72], dtype=np.uint8)
 #amarillo_altos = np.array([30, 255, 210], dtype=np.uint8)
@@ -39,7 +39,7 @@ mascara_verde_2 = cv2.morphologyEx(mascara_verde_2, cv2.MORPH_OPEN, kernel)
 #mascara_amarillo = cv2.morphologyEx(mascara_amarillo, cv2.MORPH_OPEN, kernel)
 
 #Unir las dos mascaras con el comando cv2.add()
-mask = cv2.add(mascara_verde_2, mascara_verde_1)
+mask = cv2.add(mascara_verde_1, mascara_verde_2)
 cnts = cv2.findContours(mask.copy(), cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)[-2]
 #cnts = cv2.findContours(mascara_verde.copy(), cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)[-2]
 

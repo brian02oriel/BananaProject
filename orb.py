@@ -38,10 +38,10 @@ def ORB_detector(new_image, image_template):
 
 
 # Load our image template, this is our reference image
-image_template = cv2.imread('images/banano_base.jpeg', 0) 
+image_template = cv2.imread('images/banano_v3.png', 0) 
 
 
-image1 = cv2.imread('images/banano_v2.jpg') 
+image1 = cv2.imread('images/banano_v.jpg') 
 if image1 is None or image_template is None:
     print('Could not open or find the images')
     exit(0)

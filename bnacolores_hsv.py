@@ -2,7 +2,7 @@ import imutils
 import numpy as np
 import cv2
 
-img = cv2.imread('images/banano_v3.png')
+img = cv2.imread('images/banano_v.jpg')
 if img is None:
     print('Could not open or find the images')
     exit(0)
