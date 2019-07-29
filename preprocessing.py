@@ -21,9 +21,16 @@ def ORB_detector(new_image, image_template):
     
     image_template = cv2.drawKeypoints(image_template, kp1, None)
     image1 = cv2.drawKeypoints(image1, kp2, None)
-    #cv2.imshow("ORB Template Keypoints", image_template)
-    #cv2.imshow("ORB In Keypoints", image1)
-    #cv2.waitKey(0)
+    
+    cv2.namedWindow('ORB Template Keypoints', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('ORB Template Keypoints', 450,450)
+    
+    cv2.namedWindow('ORB In Keypoints', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('ORB In Keypoints', 450,450)
+
+    cv2.imshow("ORB Template Keypoints", image_template)
+    cv2.imshow("ORB In Keypoints", image1)
+    cv2.waitKey(0)
     
     # Create matcher 
     # Note we're no longer using Flannbased matching
@@ -65,6 +72,8 @@ def formDetection(image1, image_template):
     
     # If matches exceed our threshold then object has been detected
     if matches > threshold:
+        cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
+        cv2.resizeWindow('Object Detector using ORB', 450,450)
         cv2.rectangle(image1, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,255,0), 3)
         cv2.putText(image1,'Object Found',(top_left_x + 50 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,255,0), 2)
         cv2.imshow('Object Detector using ORB', image1)
@@ -72,6 +81,8 @@ def formDetection(image1, image_template):
         cv2.destroyAllWindows()
         return True
     else:
+        cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
+        cv2.resizeWindow('Object Detector using ORB', 450,450)
         cv2.rectangle(image1, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,0,255), 3)
         cv2.putText(image1,'Object Not Found',(top_left_x + 50 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,0,255), 2)
         cv2.imshow('Object Detector using ORB', image1)
@@ -104,8 +115,15 @@ def colorMask(img):
     out = np.zeros_like(img) # Extract out the object and place into output image
     out[mask == 255] = img[mask == 255]
 
+    cv2.namedWindow('Mask', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Mask', 450,450)
+    cv2.namedWindow('Contourned', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Contourned', 450,450)
+    cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Cropped', 450,450)
+
     #Mostrar la mascara final y la imagen
-    #cv2.imshow('mascaras', mascara_verde_1)
+    cv2.imshow('Mask', mascara_verde_1)
     #cv2.imshow('Camara', img)
     cv2.imshow('Contourned', contourned)
     cv2.imshow('Cropped', out)
@@ -193,6 +211,9 @@ def hog(image):
 
 image_template = cv2.imread('images/banano_v3.png', 0) 
 img = cv2.imread('images/banano_v2.jpg')
+
+cv2.namedWindow('Entrada', cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Entrada', 450,450)
 cv2.imshow("Entrada", img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
