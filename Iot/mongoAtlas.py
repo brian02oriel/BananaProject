@@ -11,12 +11,15 @@ collection_names = db.collection_names()
 print("Collection names: ", collection_names)
 
 fs = gridfs.GridFS(db)
-
+fileID = fs.put(open(r'../images/banano_m.jpg', 'rb'))
+out = fs.get(fileID)
+print(out.length)
 
 
 #Insert images
 col = db.RipenessInfo
 col.insert_one({
+    "fileID": fileID,
     "temperature": "20°C",
     "huminidty": "90%",
     "datetime":  datetime.now()
