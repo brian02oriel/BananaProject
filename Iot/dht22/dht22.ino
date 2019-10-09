@@ -45,7 +45,7 @@ void Bright(){
 void Sensor(){
   float h = dht.readHumidity();
   float t = dht.readTemperature();
-
+  
   if(isnan(h) || isnan(t)){
     Serial.println("Sensor inoperante");
     return;
@@ -53,7 +53,7 @@ void Sensor(){
 
   data["temperature"] = t;
   data["humidity"]= h;
-  serializeJsonPretty(data, Serial);
+  serializeJson(data, Serial);
   
   Serial.println();
   
