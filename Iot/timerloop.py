@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 from datetime import datetime
 import picamera
@@ -9,10 +10,10 @@ while True:
         now = datetime.now()
         current_time = now.strftime('%H:%M:%S')
         with picamera.PiCamera() as picam:
-                time.sleep(timer)
                 picname = 'pic'+ str(count) +'.jpg'
                 picam.capture('images/'+picname)
-                MongoConnection('images/'+picname)
                 picam.close()
+                MongoConnection('images/'+picname)
+                time.sleep(timer)
                 count += 1
 

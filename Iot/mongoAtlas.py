@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pymongo import MongoClient
 from datetime import datetime
+from raspduino import SerialConnection
 import gridfs
 
 def MongoConnection(url):
@@ -15,22 +16,28 @@ def MongoConnection(url):
 
 
 def MongoWrite(db, url):
+    #Getting JSON from Arduino Sensors
+    sensor_data = SerialConnection()
+    temperature = sensor_data["temperature"]
+    humidity = sensor_data["humidity"]
+    
     #Setting gridfs for mongo file save
     fs = gridfs.GridFS(db)
     fileID = fs.put(open(url, 'rb'))
     out = fs.get(fileID)
-    print("Image ID", fileID)
-    print("Image length", out.length)
+    #print("Image ID", fileID)
+    #print("Image length", out.length)
 
     #Insert images
     col = db.RipenessInfo
     col.insert_one({
         "fileID": fileID,
-        "temperature": "20°C",
-        "huminidty": "90%",
+        "temperature": temperature,
+        "huminidty": humidity,
         "datetime":  datetime.now()
     })
-    
+    print("Temperature: ", temperature)
+    print("Humidity:" , humidity)
     print(url + ' insertada correctamente ' + str(datetime.now()))
 
 
