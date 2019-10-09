@@ -1,5 +1,4 @@
-#include <Adafruit_Sensor.h>
-
+#include <ArduinoJson.h>
 
 #include <DHT_U.h>
 #include <DHT.h>
@@ -16,11 +15,14 @@ DHT dht = DHT(dataPin, DHTTYPE);
 
 Timer t1, t2;
 
+const int capacity = JSON_OBJECT_SIZE(3);
+StaticJsonDocument<capacity> data;
 const int pinLedA = 2;
 const int pinLedB = 3;
 
 void setup() {
   // put your setup code here, to run once:
+  
   pinMode(pinLedA, OUTPUT);
   pinMode(pinLedB, OUTPUT);
   Serial.begin(9600);
@@ -49,13 +51,10 @@ void Sensor(){
     return;
   }
 
-  Serial.print("Humidity: ");
-  Serial.print(h);
-  Serial.print("%");
-  Serial.println();
-  Serial.print("Temperature: ");
-  Serial.print(t);
-  Serial.print("°C");
+  data["temperature"] = t;
+  data["humidity"]= h;
+  serializeJsonPretty(data, Serial);
+  
   Serial.println();
   
 }
