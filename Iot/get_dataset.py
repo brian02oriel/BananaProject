@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import io
 from pymongo import MongoClient
 from datetime import datetime
 import gridfs
+from PIL import Image
 
 def MongoGetImage():
     #Connecting server
@@ -10,23 +12,32 @@ def MongoGetImage():
     collection_names = db.list_collection_names()
     
     #Initialize gridfs
-    fs = gridfs.GridFS(db)
+    fs = gridfs.GridFSBucket(db)
 
     #Setting my db column
     col = db.RipenessInfo
+
+    #Getting columns
     getfiles = col.find({})
 
+    #Getting file_IDs
     fileIDColumns = [ getfileID for getfileID in getfiles]
     fileIDs = list()
     for i in range(len(fileIDColumns)):
         fileIDs.append(fileIDColumns[i]['fileID'])
-        print(fileIDColumns[i])
-    
 
-    print(fileIDs[0])
-    #files = fs.get({"_id": fileIDs[0]})
+    #Getting image files
+    for j in range(len(fileIDs)):
+        grid_out = fs.open_download_stream(fileIDs[j])
+        contents = grid_out.read()
+        SaveFile(contents, j)
 
-    #print(files.read())
+#Saving image into dataset folder
+def SaveFile(data, j):
+    img = Image.open(io.BytesIO(data))
+    img.save("./dataset/pic" + str(j) +".jpg", "JPEG")
+
+
         
 
     
