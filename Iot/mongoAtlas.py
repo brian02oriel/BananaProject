@@ -25,8 +25,7 @@ def MongoWrite(db, url):
     fs = gridfs.GridFS(db)
     fileID = fs.put(open(url, 'rb'))
     out = fs.get(fileID)
-    #print("Image ID", fileID)
-    #print("Image length", out.length)
+    
 
     #Insert images
     col = db.RipenessInfo
@@ -36,8 +35,8 @@ def MongoWrite(db, url):
         "huminidty": humidity,
         "datetime":  datetime.now()
     })
-    print("Temperature: ", temperature)
-    print("Humidity:" , humidity)
+    #print("Temperature: ", temperature)
+    #print("Humidity:" , humidity)
     print(url + ' insertada correctamente ' + str(datetime.now()))
 
 
