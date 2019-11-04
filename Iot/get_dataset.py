@@ -21,14 +21,14 @@ def MongoGetImage():
     getfiles = col.find({})
 
     #Getting file_IDs
-    fileIDColumns = [ getfileID for getfileID in getfiles]
-    fileIDs = list()
-    for i in range(len(fileIDColumns)):
-        fileIDs.append(fileIDColumns[i]['fileID'])
+    file_id_columns = [ getfileID for getfileID in getfiles]
+    file_ids = list()
+    for i in range(len(file_id_columns)):
+        file_ids.append(file_id_columns[i]['fileID'])
 
     #Getting image files
-    for j in range(len(fileIDs)):
-        grid_out = fs.open_download_stream(fileIDs[j])
+    for j in range(len(file_ids)):
+        grid_out = fs.open_download_stream(file_ids[j])
         contents = grid_out.read()
         SaveFile(contents, j)
 
