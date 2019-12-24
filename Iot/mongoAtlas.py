@@ -35,8 +35,7 @@ def MongoWrite(db, url):
         "huminidty": humidity,
         "datetime":  datetime.now()
     })
-    #print("Temperature: ", temperature)
-    #print("Humidity:" , humidity)
+
     print(url + ' insertada correctamente ' + str(datetime.now()))
 
 

@@ -52,10 +52,10 @@ def formDetection(image1, image_template):
     image1 = cv2.flip(image1,1)
 
      # Define ROI Box Dimensions (Note some of these things should be outside the loop)
-    top_left_x = width / 3
-    top_left_y = (height / 2) + (height / 4)
-    bottom_right_x = (width / 3) * 2
-    bottom_right_y = (height / 2) - (height / 4)
+    top_left_x = round(width / 3)
+    top_left_y = round((height / 2) + (height / 4))
+    bottom_right_x = round((width / 3) * 2)
+    bottom_right_y = round((height / 2) - (height / 4))
 
     # Get number of ORB matches 
     matches, template_kp = ORB_detector(image1, image_template)
@@ -68,7 +68,7 @@ def formDetection(image1, image_template):
     # For new images or lightening conditions you may need to experiment a bit 
     # Note: The ORB detector to get the top 1000 matches, 350 is essentially a min 35% match
     threshold = template_kp * 35/100
-    print("Threshold: ", threshold)
+    #print("Threshold: ", threshold)
     
     # If matches exceed our threshold then object has been detected
     if matches > threshold:
@@ -223,13 +223,13 @@ if img is None or image_template is None:
     exit(0)
 
 detector = formDetection(img, image_template)
-print("Detector", detector)
+#print("Detector", detector)
 if detector:
     out = colorMask(img)
     hist = histogram(out)
-    print("Valores del histograma RGB: ", hist)
+    #print("Valores del histograma RGB: ", hist)
     hog = hog(out)
-    print("Valores del HOG: ", hog)
+    #print("Valores del HOG: ", hog)
 else:
     print("No se han encontrado similitudes")
     exit(0)

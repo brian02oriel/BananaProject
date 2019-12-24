@@ -37,10 +37,5 @@ def SaveFile(data, j):
     img = Image.open(io.BytesIO(data))
     img.save("./dataset/pic" + str(j) +".jpg", "JPEG")
 
-
-        
-
-    
-
 MongoGetImage()
     
