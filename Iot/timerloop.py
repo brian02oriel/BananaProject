@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 import picamera
 from mongoAtlas import MongoConnection 
-timer = 100
+timer = 1
 count = 0
 
 while True:
