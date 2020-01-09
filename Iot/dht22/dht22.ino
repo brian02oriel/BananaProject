@@ -8,7 +8,7 @@
 
 #include <SoftwareSerial.h>
 
-#define dataPin 4
+#define dataPin 3
 #define DHTTYPE DHT22
 
 DHT dht = DHT(dataPin, DHTTYPE);
@@ -37,6 +37,8 @@ void Sensor(){
   
   if(isnan(h) || isnan(t)){
     Serial.println("Sensor inoperante");
+    Serial.println(h);
+    Serial.println(t);
     return;
   }
 
