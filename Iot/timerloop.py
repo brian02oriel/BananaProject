@@ -18,5 +18,5 @@ while True:
                         count += 1
                         #time.sleep(timer)
                         picam.close()
-        print("Closing Camera")
+                print("Closing Camera")
 
