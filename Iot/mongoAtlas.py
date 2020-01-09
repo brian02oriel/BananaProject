@@ -17,9 +17,9 @@ def MongoConnection(url):
 
 def MongoWrite(db, url):
     #Getting JSON from Arduino Sensors
-    sensor_data = SerialConnection()
-    temperature = sensor_data["temperature"]
-    humidity = sensor_data["humidity"]
+    #sensor_data = SerialConnection()
+    temperature = 0 #sensor_data["temperature"]
+    humidity = 0#sensor_data["humidity"]
     
     #Setting gridfs for mongo file save
     fs = gridfs.GridFS(db)
