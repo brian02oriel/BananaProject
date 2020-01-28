@@ -8,7 +8,7 @@
 
 #include <SoftwareSerial.h>
 
-#define dataPin 3
+#define dataPin 4
 #define DHTTYPE DHT22
 
 DHT dht = DHT(dataPin, DHTTYPE);
