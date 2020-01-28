@@ -25,3 +25,4 @@ def SerialConnection():
 		print("Can't connect to the port")
 		exit(0)
 
+SerialConnection()

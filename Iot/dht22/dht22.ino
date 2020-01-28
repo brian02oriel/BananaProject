@@ -34,8 +34,6 @@ void loop() {
 void Sensor(){
   float h = dht.readHumidity();
   float t = dht.readTemperature();
-  Serial.println(h);
-  Serial.println(t);
   if(isnan(h) || isnan(t)){
     Serial.println("Sensor inoperante");
     return;
