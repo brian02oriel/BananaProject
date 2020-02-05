@@ -4,7 +4,7 @@ from datetime import datetime
 import picamera
 from mongoAtlas import MongoConnection 
 timer = 1
-count = 17
+count = 25
 
 while True:
         now = datetime.now().time()
