@@ -32,7 +32,7 @@ def MongoWrite(db, url):
     col.insert_one({
         "fileID": fileID,
         "temperature": temperature,
-        "huminidty": humidity,
+        "humidity": humidity,
         "datetime":  datetime.now()
     })
 
