@@ -32,7 +32,7 @@ def MongoGetImage():
     for i in range(len(file_id_columns)):
         file_ids.append(file_id_columns[i]['fileID'])
         temperature.append(file_id_columns[i]['temperature'])
-        humidity.append(file_id_columns[i]['huminidty'])
+        humidity.append(file_id_columns[i]['humidity'])
         datetime.append(file_id_columns[i]['datetime'])
 
     #Getting image files
