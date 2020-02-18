@@ -28,11 +28,12 @@ def MongoGetImage():
     file_ids = list()
     temperature = list()
     humidity = list()
-
+    datetime = list()
     for i in range(len(file_id_columns)):
         file_ids.append(file_id_columns[i]['fileID'])
         temperature.append(file_id_columns[i]['temperature'])
         humidity.append(file_id_columns[i]['huminidty'])
+        datetime.append(file_id_columns[i]['datetime'])
 
     #Getting image files
     for j in range(len(file_ids)):
@@ -43,7 +44,8 @@ def MongoGetImage():
     #Getting humidity and temperature
     enviromental_information = {
         'temperature': temperature,
-        'humidity': humidity
+        'humidity': humidity,
+        'datetime': datetime
     }
     df = pd.DataFrame(data=enviromental_information)
     print(df)
