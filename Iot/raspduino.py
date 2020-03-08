@@ -12,9 +12,11 @@ def SerialConnection():
 			try:
 				data_string = ser.readline()
 				data_string = data_string.decode("utf-8")
+				print("data string decoded: ", data_string)
 			except ValueError:
 				print("Error found: ", ValueError)
 				data_string = '{"temperature": 0, "humidity": 0}'
+				data_string = data_string.decode("utf-8")
 				
 			data_json = json.loads(data_string)
 			#print("coming data: ", data_string)	
