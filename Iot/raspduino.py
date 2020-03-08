@@ -17,9 +17,10 @@ def SerialConnection():
 				print("Error found: ", ValueError)
 				data_string = '{"temperature": 0, "humidity": 0}'
 				data_string = data_string.decode("utf-8")
+				print("data string decoded: ", data_string)
 				
 			data_json = json.loads(data_string)
-			#print("coming data: ", data_string)	
+			print("coming data: ", data_string)	
 			print("JSON: ",data_json)
 			return data_json
 	else:
