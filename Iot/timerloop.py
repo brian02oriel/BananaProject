@@ -16,7 +16,7 @@ while True:
                         picam.capture('images/'+picname)
                         MongoConnection('images/'+picname)
                         count += 1
-                        #time.sleep(timer)
+                        time.sleep(timer)
                         picam.close()
                 print("Closing Camera")
 

@@ -17,7 +17,12 @@ def MongoConnection(url):
 
 def MongoWrite(db, url):
     #Getting JSON from Arduino Sensors
-    sensor_data = SerialConnection()
+    try:
+        sensor_data = SerialConnection()
+    except ValueError:
+        print("Error found: ", ValueError)
+        sensor_data = {'temperature': 0, 'humidity': 0}
+        
     print("Serial Connection: ", sensor_data)
     temperature = sensor_data["temperature"]
     humidity = sensor_data["humidity"]
