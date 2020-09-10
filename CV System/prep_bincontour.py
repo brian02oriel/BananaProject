@@ -196,8 +196,8 @@ def hog(image):
     return gradients
 
 
-image_template = cv2.imread('../images/banano_v2.jpg', 0) 
-img = cv2.imread('../images/banano_v.jpg')
+image_template = cv2.imread('../Test images/banano_v2.jpg', 0) 
+img = cv2.imread('../Test images/banano_v.jpg')
 
 cv2.namedWindow('Entrada', cv2.WINDOW_NORMAL)
 cv2.resizeWindow('Entrada', 450,450)

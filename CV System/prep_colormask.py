@@ -46,10 +46,10 @@ def ORB_detector(new_image, image_template):
     return len(matches), len(kp1)
 
 #--------------- Detection ------------------------------
-def formDetection(image1, image_template):
-    height, width = image1.shape[:2]
+def formDetection(input_image, image_template):
+    height, width = input_image.shape[:2]
 
-    image1 = cv2.flip(image1,1)
+    #image1 = cv2.flip(image1,1)
 
      # Define ROI Box Dimensions (Note some of these things should be outside the loop)
     top_left_x = round(width / 3)
@@ -58,11 +58,11 @@ def formDetection(image1, image_template):
     bottom_right_y = round((height / 2) - (height / 4))
 
     # Get number of ORB matches 
-    matches, template_kp = ORB_detector(image1, image_template)
+    matches, template_kp = ORB_detector(input_image, image_template)
 
     # Display status string showing the current no. of matches 
     output_string = "Matches = " + str(matches)
-    cv2.putText(image1, output_string, (top_left_x + 25 , top_left_y + 100), cv2.FONT_HERSHEY_COMPLEX, 1, (250,0,150), 2)
+    cv2.putText(input_image, output_string, (top_left_x + 25 , top_left_y + 100), cv2.FONT_HERSHEY_COMPLEX, 1, (250,0,150), 2)
     print(output_string)
     # Our threshold to indicate object deteciton
     # For new images or lightening conditions you may need to experiment a bit 
@@ -72,27 +72,27 @@ def formDetection(image1, image_template):
     
     # If matches exceed our threshold then object has been detected
     if matches > threshold:
-        cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('Object Detector using ORB', 450,450)
-        cv2.rectangle(image1, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,255,0), 3)
-        cv2.putText(image1,'Object Found',(top_left_x + 50 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,255,0), 2)
-        cv2.imshow('Object Detector using ORB', image1)
+        #cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
+        #cv2.resizeWindow('Object Detector using ORB', 450,450)
+        cv2.rectangle(input_image, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,255,0), 1)
+        cv2.putText(input_image,'Object Found',(top_left_x, top_left_y + 15), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,255,0), 1)
+        cv2.imshow('Object Detector using ORB', input_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         return True
     else:
-        cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('Object Detector using ORB', 450,450)
-        cv2.rectangle(image1, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,0,255), 3)
-        cv2.putText(image1,'Object Not Found',(top_left_x + 50 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,0,255), 2)
-        cv2.imshow('Object Detector using ORB', image1)
+        #cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
+        #cv2.resizeWindow('Object Detector using ORB', 450,450)
+        cv2.rectangle(input_image, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,0,255), 1)
+        cv2.putText(input_image,'Object Not Found',(top_left_x, top_left_y + 15), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,0,255), 1)
+        cv2.imshow('Object Detector using ORB', input_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         return False
 
 # ---------------- Finding Object to crop it -----------------------------
 def colorMask(img):
-    img = imutils.resize(img, width = 600)
+    #img = imutils.resize(img, width = 600)
     verde_bajos_1 = np.array([228, 228, 228], dtype=np.uint8)
     verde_altos_1 = np.array([255, 255, 255], dtype=np.uint8)
 
@@ -115,12 +115,12 @@ def colorMask(img):
     out = np.zeros_like(img) # Extract out the object and place into output image
     out[mask == 255] = img[mask == 255]
 
-    cv2.namedWindow('Mask', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Mask', 450,450)
-    cv2.namedWindow('Contourned', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Contourned', 450,450)
-    cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Cropped', 450,450)
+    #cv2.namedWindow('Mask', cv2.WINDOW_NORMAL)
+    #cv2.resizeWindow('Mask', 450,450)
+    #cv2.namedWindow('Contourned', cv2.WINDOW_NORMAL)
+    #cv2.resizeWindow('Contourned', 450,450)
+    #cv2.namedWindow('Cropped', cv2.WINDOW_NORMAL)
+    #cv2.resizeWindow('Cropped', 450,450)
 
     #Mostrar la mascara final y la imagen
     cv2.imshow('Mask', mascara_verde_1)
@@ -209,11 +209,14 @@ def hog(image):
     return gradients
 
 
-image_template = cv2.imread('../images/banano_v2.jpg', 0) 
-img = cv2.imread('../images/banano_v.jpg')
+image_template = cv2.imread('./Test images/banano_v2.jpg', 0) 
+image_template = cv2.resize(image_template, (200, 100))
+img = cv2.imread('./Test images/banano_v.jpg')
+img = cv2.resize(img, (200, 100))
 
-cv2.namedWindow('Entrada', cv2.WINDOW_NORMAL)
-cv2.resizeWindow('Entrada', 450,450)
+#cv2.namedWindow('Entrada', cv2.WINDOW_NORMAL)
+#cv2.resizeWindow('Entrada', 450,450)
+cv2.imshow("Template", image_template)
 cv2.imshow("Entrada", img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
@@ -222,7 +225,7 @@ if img is None or image_template is None:
     print('Could not open or find the images')
     exit(0)
 
-detector = formDetection(img, image_template)
+detector = formDetection(img.copy(), image_template)
 #print("Detector", detector)
 if detector:
     out = colorMask(img)
