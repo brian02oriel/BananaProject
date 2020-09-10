@@ -1,4 +1,6 @@
 import imutils
+from os import listdir
+from os.path import isfile, join
 import numpy as np
 from matplotlib import pyplot as plt
 import cv2
@@ -22,15 +24,15 @@ def ORB_detector(new_image, image_template):
     image_template = cv2.drawKeypoints(image_template, kp1, None)
     image1 = cv2.drawKeypoints(image1, kp2, None)
     
-    cv2.namedWindow('ORB Template Keypoints', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('ORB Template Keypoints', 450,450)
+    #cv2.namedWindow('ORB Template Keypoints', cv2.WINDOW_NORMAL)
+    #cv2.resizeWindow('ORB Template Keypoints', 450,450)
     
-    cv2.namedWindow('ORB In Keypoints', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('ORB In Keypoints', 450,450)
+    #cv2.namedWindow('ORB In Keypoints', cv2.WINDOW_NORMAL)
+    #cv2.resizeWindow('ORB In Keypoints', 450,450)
 
-    cv2.imshow("ORB Template Keypoints", image_template)
-    cv2.imshow("ORB In Keypoints", image1)
-    cv2.waitKey(0)
+    #cv2.imshow("ORB Template Keypoints", image_template)
+    #cv2.imshow("ORB In Keypoints", image1)
+    #cv2.waitKey(0)
     
     # Create matcher 
     # Note we're no longer using Flannbased matching
@@ -46,10 +48,10 @@ def ORB_detector(new_image, image_template):
     return len(matches), len(kp1)
 
 #--------------- Detection ------------------------------
-def formDetection(image1, image_template):
-    height, width = image1.shape[:2]
+def formDetection(input_image, image_template):
+    height, width = input_image.shape[:2]
 
-    image1 = cv2.flip(image1,1)
+    #input_image = cv2.flip(input_image,1)
 
      # Define ROI Box Dimensions (Note some of these things should be outside the loop)
     top_left_x = round(width / 3)
@@ -58,64 +60,64 @@ def formDetection(image1, image_template):
     bottom_right_y = round((height / 2) - (height / 4))
 
     # Get number of ORB matches 
-    matches, template_kp = ORB_detector(image1, image_template)
+    matches, template_kp = ORB_detector(input_image, image_template)
 
     # Display status string showing the current no. of matches 
     output_string = "Matches = " + str(matches)
-    cv2.putText(image1, output_string, (top_left_x + 25 , top_left_y + 100), cv2.FONT_HERSHEY_COMPLEX, 1, (250,0,150), 2)
+    cv2.putText(input_image, output_string, (top_left_x + 25 , top_left_y + 100), cv2.FONT_HERSHEY_COMPLEX, 1, (250,0,150), 2)
     print(output_string)
     # Our threshold to indicate object deteciton
     # For new images or lightening conditions you may need to experiment a bit 
     # Note: The ORB detector to get the top 1000 matches, 350 is essentially a min 35% match
-    threshold = template_kp * 35/100
-    #print("Threshold: ", threshold)
+    threshold = int(template_kp * 35/100)
+    print("Threshold: ", threshold)
     
     # If matches exceed our threshold then object has been detected
-    if matches > threshold:
-        cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('Object Detector using ORB', 450,450)
-        cv2.rectangle(image1, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,255,0), 3)
-        cv2.putText(image1,'Object Found',(top_left_x + 50 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,255,0), 2)
-        cv2.imshow('Object Detector using ORB', image1)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+    if(matches >= threshold):
+        #cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
+        #cv2.resizeWindow('Object Detector using ORB', 450,450)
+        #cv2.rectangle(input_image, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,255,0), 1)
+        #cv2.putText(input_image,'Object Found',(width + 15 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,255,0), 1)
+        #cv2.imshow('Object Detector using ORB', input_image)
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
         return True
     else:
-        cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('Object Detector using ORB', 450,450)
-        cv2.rectangle(image1, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,0,255), 3)
-        cv2.putText(image1,'Object Not Found',(top_left_x + 50 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,0,255), 2)
-        cv2.imshow('Object Detector using ORB', image1)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        #cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
+        #cv2.resizeWindow('Object Detector using ORB', 450,450)
+        #cv2.rectangle(input_image, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,0,255), 1)
+        #cv2.putText(input_image,'Object Not Found',(width + 15 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,0,255), 1)
+        #cv2.imshow('Object Detector using ORB', input_image)
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()
         return False
 
 # ---------------- Finding Object to crop it -----------------------------
 def colorMask(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('Gray', gray)
-    cv2.waitKey(0)
+    #cv2.imshow('Gray', gray)
+    #cv2.waitKey(0)
 
     kernel = np.ones((6, 6), np.uint8)
     gray = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, kernel)
     gray = cv2.morphologyEx(gray, cv2.MORPH_OPEN, kernel)
 
-    ret, thresh = cv2.threshold(gray, 245, 255, 0)
-    cv2.imshow('Mask', thresh)
-    cv2.waitKey(0)
+    ret, thresh = cv2.threshold(gray, 105, 255, cv2.THRESH_BINARY)
+    #cv2.imshow('Mask', thresh)
+    #cv2.waitKey(0)
 
     cnts, hierarchy= cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     
     contourned = cv2.drawContours(img, cnts, 1, (0,255,0), 1)
-    cv2.imshow('Contourned', img)
-    cv2.waitKey(0)
+    #cv2.imshow('Contourned', img)
+    #cv2.waitKey(0)
 
     out = np.zeros_like(img) # Extract out the object and place into output image
     out[thresh == 0] = img[thresh == 0]
-    cv2.imshow('Cropped', out)
-    cv2.waitKey(0)
+    #cv2.imshow('Cropped', out)
+    #cv2.waitKey(0)
 
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
     return out
 #----------------- Histograma RGB -----------------------------
 def histogram(img):
@@ -195,30 +197,50 @@ def hog(image):
     cv2.destroyAllWindows()
     return gradients
 
+def main(sourcepath, outputpath, templatepath):
+    image_template = cv2.imread(templatepath, 0) 
+    image_template = cv2.resize(image_template, (150,150))
+    cv2.imshow("Entrada", image_template)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
-image_template = cv2.imread('../Test images/banano_v2.jpg', 0) 
-img = cv2.imread('../Test images/banano_v.jpg')
-
-cv2.namedWindow('Entrada', cv2.WINDOW_NORMAL)
-cv2.resizeWindow('Entrada', 450,450)
-cv2.imshow("Entrada", img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-if img is None or image_template is None:
-    print('Could not open or find the images')
-    exit(0)
-
-detector = formDetection(img, image_template)
-#print("Detector", detector)
-if detector:
-    out = colorMask(img)
-    hist = histogram(out)
-    #print("Valores del histograma RGB: ", hist)
-    hog = hog(out)
-    print("Valores del HOG: ", hog)
+    #cv2.namedWindow('Entrada', cv2.WINDOW_NORMAL)
+    #cv2.resizeWindow('Entrada', 450,450)
+    #cv2.imshow("Entrada", img)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
     
-else:
-    print("No se han encontrado similitudes")
-    exit(0)
+    onlyfiles = [f for f in listdir(sourcepath) if(isfile(join(sourcepath, f)))]
+    count = 0
+    for i, files in enumerate(onlyfiles):
+        if(".jpg" in onlyfiles[i]):
+            image_path = sourcepath + files
+            #print("{0} => {1}".format(i, image_path))
+
+            img = cv2.imread(image_path)
+            img = cv2.resize(img, (150, 150))
+
+            if(img is None or image_template is None):
+                print('Could not open or find the images')
+                exit(0)
+
+            detector = formDetection(img.copy(), image_template)
+            print("Detector", detector)
+            if(detector):
+                out = colorMask(img)
+                cv2.imwrite(outputpath + str(count) + ".jpg" , out)
+                #hist = histogram(out)
+                #print("Valores del histograma RGB: ", hist)
+                #hog_result = hog(out)
+                #print("HOG shape: {0}| HOG type: {1}".format(hog_result.shape, type(hog_result)))
+                count += 1
+                
+            else:
+                print("No se han encontrado similitudes")
+                print("pasando al siguiente...")
+        print("siguiente imagen...")
+    print("finalizado, dataset limpio")
+
+main('./Captured images/Second Try Dataset (green banana)/', './Cleared images/Green banana/', './Template images/template_dataset_1.jpg')
+
 

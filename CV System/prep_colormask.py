@@ -1,4 +1,6 @@
 import imutils
+from os import listdir
+from os.path import isfile, join
 import numpy as np
 from matplotlib import pyplot as plt
 import cv2
@@ -209,31 +211,50 @@ def hog(image):
     return gradients
 
 
-image_template = cv2.imread('./Test images/banano_v2.jpg', 0) 
-image_template = cv2.resize(image_template, (200, 100))
-img = cv2.imread('./Test images/banano_v.jpg')
-img = cv2.resize(img, (200, 100))
+def main(sourcepath, outputpath, templatepath):
+    image_template = cv2.imread(templatepath, 0) 
+    image_template = cv2.resize(image_template, (150,150))
+    cv2.imshow("Entrada", image_template)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
-#cv2.namedWindow('Entrada', cv2.WINDOW_NORMAL)
-#cv2.resizeWindow('Entrada', 450,450)
-cv2.imshow("Template", image_template)
-cv2.imshow("Entrada", img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    #cv2.namedWindow('Entrada', cv2.WINDOW_NORMAL)
+    #cv2.resizeWindow('Entrada', 450,450)
+    #cv2.imshow("Entrada", img)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+    
+    onlyfiles = [f for f in listdir(sourcepath) if(isfile(join(sourcepath, f)))]
+    count = 0
+    for i, files in enumerate(onlyfiles):
+        if(".jpg" in onlyfiles[i]):
+            image_path = sourcepath + files
+            #print("{0} => {1}".format(i, image_path))
 
-if img is None or image_template is None:
-    print('Could not open or find the images')
-    exit(0)
+            img = cv2.imread(image_path)
+            img = cv2.resize(img, (150, 150))
 
-detector = formDetection(img.copy(), image_template)
-#print("Detector", detector)
-if detector:
-    out = colorMask(img)
-    hist = histogram(out)
-    #print("Valores del histograma RGB: ", hist)
-    hog = hog(out)
-    #print("Valores del HOG: ", hog)
-else:
-    print("No se han encontrado similitudes")
-    exit(0)
+            if(img is None or image_template is None):
+                print('Could not open or find the images')
+                exit(0)
+
+            detector = formDetection(img.copy(), image_template)
+            print("Detector", detector)
+            if(detector):
+                out = colorMask(img)
+                cv2.imwrite(outputpath + str(count) + ".jpg" , out)
+                #hist = histogram(out)
+                #print("Valores del histograma RGB: ", hist)
+                #hog_result = hog(out)
+                #print("HOG shape: {0}| HOG type: {1}".format(hog_result.shape, type(hog_result)))
+                count += 1
+                
+            else:
+                print("No se han encontrado similitudes")
+                print("pasando al siguiente...")
+        print("siguiente imagen...")
+    print("finalizado, dataset limpio")
+
+main('./Captured images/Second Try Dataset (green banana)/', './Cleared images/Green banana/', './Template images/template_dataset_1.jpg')
+
 
