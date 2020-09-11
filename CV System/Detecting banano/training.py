@@ -13,7 +13,57 @@ from sklearn.metrics import confusion_matrix, precision_score, recall_score, acc
 from matplotlib import pyplot as plt
 from sklearn.metrics import roc_auc_score
 
-def creating_dataset(data_path, label, Training_Data, Labels):
+def plot_roc_curve(fpr, tpr, label=None):
+    plt.title("ROC Curve")
+    plt.plot(fpr, tpr, linewidth=2, label=label)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.axis([0, 1, 0, 1])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    
+def measuringPerformance(name, model, X, y, y_true, y_pred):    
+    print("Measuring performance of: ", name)
+    print("\n")
+    
+    # Cross validation score
+    print("Cross validation score: ")
+    print(cross_val_score(model, X, y, scoring="accuracy"))
+    print('\n')
+    
+    # Confusion matrix
+    y_train_predict = cross_val_predict(model, X, y, cv=3)
+    print("Confusion matrix: ")
+    print(confusion_matrix(y, y_train_predict))
+    print('\n')
+    
+    # Precision and Recall
+    print("Precision: ")
+    print(precision_score(y, y_train_predict))
+    print("Recall: ")
+    print(recall_score(y, y_train_predict))
+    print('\n')
+    
+    # Accuracy score
+    print("Accuracy: ")
+    print(accuracy_score(y_true, y_pred))
+    print('\n')
+
+    # F1 score
+    print("F1 score: ")
+    print(f1_score(y, y_train_predict))
+    
+    # ROC curve
+    y_probs_rf = cross_val_predict(model, X, y, cv=3, method="predict_proba")
+    y_scores_rf = y_probs_rf[:, 1]
+    fpr_rf, tpr_rf, thresh_rf = roc_curve(y, y_scores_rf)
+    plot_roc_curve(fpr_rf, tpr_rf)
+    plt.show()
+    
+    # ROC AUC score
+    print("ROC AUC score: ")
+    print(roc_auc_score(y, y_scores_rf))
+
+def creating_dataset(data_path, label, X, y):
     onlyfiles = [f for f in listdir(data_path) if isfile(join(data_path, f))]
     
     # Preparing the radius and the no. of points of the LBP descriptor
@@ -27,15 +77,24 @@ def creating_dataset(data_path, label, Training_Data, Labels):
         images = cv2.imread(image_path, 0)
         images = cv2.resize(images, (150,150))
         hist = desc.describe(images)
-        Training_Data.append(hist)
-        Labels.append(label)
-    return Training_Data, Labels
+        X.append(hist)
+        y.append(label)
+    return X, y
 
-Training_Data, Labels = [], []
-Training_Data, Labels = creating_dataset('../Captured images/Third Try Dataset (green segment)/', 1, Training_Data, Labels)
-Training_Data, Labels = creating_dataset('../Captured images/Second Try Dataset (green banana)/', 1, Training_Data, Labels)
-Training_Data, Labels = creating_dataset('../Captured images/Fifth Try (green segment without ventilation)/', 1, Training_Data, Labels)
-Training_Data, Labels = creating_dataset('./Negatives/', 0, Training_Data, Labels)
+X, y = [], []
+X, y = creating_dataset('../Captured images/Third Try Dataset (green segment)/', 1, X, y)
+X, y = creating_dataset('../Captured images/Second Try Dataset (green banana)/', 1, X, y)
+X, y = creating_dataset('../Captured images/Fifth Try (green segment without ventilation)/', 1, X, y)
+X, y = creating_dataset('./Negatives/', 0, X, y)
 
-print(len(Training_Data))
-print(len(Labels))
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+print(len(X_train), len(X_test), len(y_train), len(y_test))
+
+clf = KNeighborsClassifier(n_neighbors=3)
+clf.fit(X_train, y_train)
+clfp = clf.predict(X_test)
+print(clfp)
+measuringPerformance("KNN", clf, X_train, y_train, y_test, clfp)
+
+dump(clf, 'classifier.joblib')
+print("Model successfully saved")
