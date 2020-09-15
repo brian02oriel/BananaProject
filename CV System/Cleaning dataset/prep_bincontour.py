@@ -39,31 +39,26 @@ def binMask(img):
     #cv2.waitKey(0)
 
     cnts, hierarchy= cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    
-    contourned = cv2.drawContours(img, cnts, 1, (0,255,0), 1)
-    
-    cv2.imshow('Contourned', img)
-    
-    print(hierarchy)
+    #contourned = cv2.drawContours(img, cnts, 1, (0,255,0), 1)
+    #cv2.imshow('Contourned', img)
 
-    # Extraer el penúltimo en la jerarquía para usarlo como máscara
-    for h in hierarchy:
-        for el in h:
-            print(el[3])
-
+    hull = []
     for c in cnts:
-        hull = cv2.convexHull(c)
-        cv2.drawContours(img, [hull], 0, (0, 255, 0), 2)
-        cv2.imshow('Convex Hull', img)
-    cv2.waitKey(0)
+        hull.append(cv2.convexHull(c))
 
-    out = np.zeros_like(img) # Extract out the object and place into output image
-    out[thresh == 0] = img[thresh == 0]
-    #cv2.imshow('Cropped', out)
+        print("hull: {0}\n".format(hull))
+
+    print("hull len: {0}\n".format(len(hull)))
+    img_hull = img.copy()
+    cv2.drawContours(img_hull, [hull[1]], 0, (0, 0, 0), -1)
+    cv2.imshow('Convex Hull', img_hull)
     #cv2.waitKey(0)
 
-    #cv2.destroyAllWindows()
-    return out
+    cropped = cv2.bitwise_xor(img, img_hull)
+    cv2.imshow("XOR", cropped)
+    cv2.waitKey(0)    
+
+    return cropped
 #----------------- Histograma RGB -----------------------------
 def histogram(img):
     color = ('b', 'g', 'r')
@@ -166,8 +161,8 @@ def main(sourcepath, outputpath):
 
             detector = binClassifier(img.copy())
             if(detector):
-                out = binMask(img)
-                cv2.imwrite(outputpath + str(count) + ".jpg" , out)
+                cropped = binMask(img.copy())
+                cv2.imwrite(outputpath + str(count) + ".jpg" , cropped)
                 #hist = histogram(out)
                 #print("Valores del histograma RGB: ", hist)
                 #hog_result = hog(out)
@@ -180,8 +175,8 @@ def main(sourcepath, outputpath):
         print("siguiente imagen...")
     print("finalizado, dataset limpio")
 
-#main('../Captured images/Second Try Dataset (green banana)/', './Cleared images/Green banana/')
-main('../Captured images/Third Try Dataset (green segment)/', './Cleared images/Green segment/')
+main('../Captured images/Second Try Dataset (green banana)/', './Cleared images/Green banana/')
+#main('../Captured images/Third Try Dataset (green segment)/', './Cleared images/Green segment/')
 #main('../Captured images/Fifth Try (green segment without ventilation)/', './Cleared images/Green segment (no ventilation)/')
 
 
