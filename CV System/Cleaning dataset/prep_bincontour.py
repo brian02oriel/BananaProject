@@ -25,7 +25,7 @@ def binClassifier(input_image):
     return prediction
 
 # ---------------- Finding Object to crop it -----------------------------
-def colorMask(img):
+def binMask(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     #cv2.imshow('Gray', gray)
     #cv2.waitKey(0)
@@ -40,9 +40,22 @@ def colorMask(img):
 
     cnts, hierarchy= cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     
-    #contourned = cv2.drawContours(img, cnts, 1, (0,255,0), 1)
-    #cv2.imshow('Contourned', img)
-    #cv2.waitKey(0)
+    contourned = cv2.drawContours(img, cnts, 1, (0,255,0), 1)
+    
+    cv2.imshow('Contourned', img)
+    
+    print(hierarchy)
+
+    # Extraer el penúltimo en la jerarquía para usarlo como máscara
+    for h in hierarchy:
+        for el in h:
+            print(el[3])
+
+    for c in cnts:
+        hull = cv2.convexHull(c)
+        cv2.drawContours(img, [hull], 0, (0, 255, 0), 2)
+        cv2.imshow('Convex Hull', img)
+    cv2.waitKey(0)
 
     out = np.zeros_like(img) # Extract out the object and place into output image
     out[thresh == 0] = img[thresh == 0]
@@ -153,7 +166,7 @@ def main(sourcepath, outputpath):
 
             detector = binClassifier(img.copy())
             if(detector):
-                out = colorMask(img)
+                out = binMask(img)
                 cv2.imwrite(outputpath + str(count) + ".jpg" , out)
                 #hist = histogram(out)
                 #print("Valores del histograma RGB: ", hist)
@@ -167,8 +180,8 @@ def main(sourcepath, outputpath):
         print("siguiente imagen...")
     print("finalizado, dataset limpio")
 
-main('../Captured images/Second Try Dataset (green banana)/', './Cleared images/Green banana/')
+#main('../Captured images/Second Try Dataset (green banana)/', './Cleared images/Green banana/')
 main('../Captured images/Third Try Dataset (green segment)/', './Cleared images/Green segment/')
-main('../Captured images/Fifth Try (green segment without ventilation)/', './Cleared images/Green segment (no ventilation)/')
+#main('../Captured images/Fifth Try (green segment without ventilation)/', './Cleared images/Green segment (no ventilation)/')
 
 
