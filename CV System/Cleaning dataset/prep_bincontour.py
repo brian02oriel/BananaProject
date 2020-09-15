@@ -3,94 +3,26 @@ from os import listdir
 from os.path import isfile, join
 import numpy as np
 from matplotlib import pyplot as plt
+from joblib import load
+from LocalBinaryPattern import LocalBinaryPatterns
 import cv2
 
-# -------------- ORB detector ----------------
-def ORB_detector(new_image, image_template):
-    # Function that compares input image to template
-    # It then returns the number of ORB matches between them
-    
-    image1 = cv2.cvtColor(new_image, cv2.COLOR_BGR2GRAY)
-
-    # Create ORB detector with 1000 keypoints with a scaling pyramid factor of 1.2
-    orb = cv2.ORB_create(nfeatures = 1000)
-
-    # Detect keypoints of original image
-    (kp1, des1) = orb.detectAndCompute(image1, None)
-    template_kp = kp1
-    # Detect keypoints of rotated image
-    (kp2, des2) = orb.detectAndCompute(image_template, None)
-    
-    image_template = cv2.drawKeypoints(image_template, kp1, None)
-    image1 = cv2.drawKeypoints(image1, kp2, None)
-    
-    #cv2.namedWindow('ORB Template Keypoints', cv2.WINDOW_NORMAL)
-    #cv2.resizeWindow('ORB Template Keypoints', 450,450)
-    
-    #cv2.namedWindow('ORB In Keypoints', cv2.WINDOW_NORMAL)
-    #cv2.resizeWindow('ORB In Keypoints', 450,450)
-
-    #cv2.imshow("ORB Template Keypoints", image_template)
-    #cv2.imshow("ORB In Keypoints", image1)
-    #cv2.waitKey(0)
-    
-    # Create matcher 
-    # Note we're no longer using Flannbased matching
-    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-
-    # Do matching
-    matches = bf.match(des1,des2)
-
-    # Sort the matches based on distance.  Least distance
-    # is better
-    matches = sorted(matches, key=lambda val: val.distance)
-
-    return len(matches), len(kp1)
-
-#--------------- Detection ------------------------------
-def formDetection(input_image, image_template):
-    height, width = input_image.shape[:2]
-
-    #input_image = cv2.flip(input_image,1)
-
-     # Define ROI Box Dimensions (Note some of these things should be outside the loop)
-    top_left_x = round(width / 3)
-    top_left_y = round((height / 2) + (height / 4))
-    bottom_right_x = round((width / 3) * 2)
-    bottom_right_y = round((height / 2) - (height / 4))
-
-    # Get number of ORB matches 
-    matches, template_kp = ORB_detector(input_image, image_template)
-
-    # Display status string showing the current no. of matches 
-    output_string = "Matches = " + str(matches)
-    cv2.putText(input_image, output_string, (top_left_x + 25 , top_left_y + 100), cv2.FONT_HERSHEY_COMPLEX, 1, (250,0,150), 2)
-    print(output_string)
-    # Our threshold to indicate object deteciton
-    # For new images or lightening conditions you may need to experiment a bit 
-    # Note: The ORB detector to get the top 1000 matches, 350 is essentially a min 35% match
-    threshold = int(template_kp * 35/100)
-    print("Threshold: ", threshold)
-    
-    # If matches exceed our threshold then object has been detected
-    if(matches >= threshold):
-        #cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
-        #cv2.resizeWindow('Object Detector using ORB', 450,450)
-        #cv2.rectangle(input_image, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,255,0), 1)
-        #cv2.putText(input_image,'Object Found',(width + 15 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,255,0), 1)
-        #cv2.imshow('Object Detector using ORB', input_image)
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
-        return True
-    else:
-        #cv2.namedWindow('Object Detector using ORB', cv2.WINDOW_NORMAL)
-        #cv2.resizeWindow('Object Detector using ORB', 450,450)
-        #cv2.rectangle(input_image, (top_left_x,top_left_y), (bottom_right_x,bottom_right_y), (0,0,255), 1)
-        #cv2.putText(input_image,'Object Not Found',(width + 15 , top_left_y + 25), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1 ,(0,0,255), 1)
-        #cv2.imshow('Object Detector using ORB', input_image)
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
-        return False
+# Detection using pre trained model
+def binClassifier(input_image):
+    decoding = {
+        0: "Non banana",
+        1: "Banana"
+    }
+    radius = 3
+    no_points = 8 * radius
+    desc = LocalBinaryPatterns(no_points, radius)
+    image = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
+    hist = desc.describe(image)
+    hist = np.array(hist)
+    model = load('../Detecting banano/classifier.joblib')
+    prediction = model.predict(hist.reshape(1, -1))
+    print("Prediction: ", decoding[prediction[0]])
+    return prediction
 
 # ---------------- Finding Object to crop it -----------------------------
 def colorMask(img):
@@ -108,7 +40,7 @@ def colorMask(img):
 
     cnts, hierarchy= cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     
-    contourned = cv2.drawContours(img, cnts, 1, (0,255,0), 1)
+    #contourned = cv2.drawContours(img, cnts, 1, (0,255,0), 1)
     #cv2.imshow('Contourned', img)
     #cv2.waitKey(0)
 
@@ -197,13 +129,8 @@ def hog(image):
     cv2.destroyAllWindows()
     return gradients
 
-def main(sourcepath, outputpath, templatepath):
-    image_template = cv2.imread(templatepath, 0) 
-    image_template = cv2.resize(image_template, (150,150))
-    cv2.imshow("Entrada", image_template)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
+def main(sourcepath, outputpath):
+    print(outputpath)
     #cv2.namedWindow('Entrada', cv2.WINDOW_NORMAL)
     #cv2.resizeWindow('Entrada', 450,450)
     #cv2.imshow("Entrada", img)
@@ -220,12 +147,11 @@ def main(sourcepath, outputpath, templatepath):
             img = cv2.imread(image_path)
             img = cv2.resize(img, (150, 150))
 
-            if(img is None or image_template is None):
+            if(img is None):
                 print('Could not open or find the images')
                 exit(0)
 
-            detector = formDetection(img.copy(), image_template)
-            print("Detector", detector)
+            detector = binClassifier(img.copy())
             if(detector):
                 out = colorMask(img)
                 cv2.imwrite(outputpath + str(count) + ".jpg" , out)
@@ -241,6 +167,8 @@ def main(sourcepath, outputpath, templatepath):
         print("siguiente imagen...")
     print("finalizado, dataset limpio")
 
-main('../Captured images/Second Try Dataset (green banana)/', './Cleared images/Green banana/', './Template images/template_dataset_1.jpg')
+main('../Captured images/Second Try Dataset (green banana)/', './Cleared images/Green banana/')
+main('../Captured images/Third Try Dataset (green segment)/', './Cleared images/Green segment/')
+main('../Captured images/Fifth Try (green segment without ventilation)/', './Cleared images/Green segment (no ventilation)/')
 
 
