@@ -3,12 +3,15 @@ from os import listdir
 from os.path import isfile, join
 import numpy as np
 from matplotlib import pyplot as plt
+from statistics import mean, median
 from joblib import load
 from LocalBinaryPattern import LocalBinaryPatterns
 import cv2
 
+
 # Detection using pre trained model
-def binClassifier(input_image):
+def binClassifier(phase, input_image):
+    #cv2.imshow(phase, input_image)
     decoding = {
         0: "Non banana",
         1: "Banana"
@@ -21,7 +24,7 @@ def binClassifier(input_image):
     hist = np.array(hist)
     model = load('../Detecting banano/classifier.joblib')
     prediction = model.predict(hist.reshape(1, -1))
-    print("Prediction: ", decoding[prediction[0]])
+    print("Phase: {0} -->  Prediction: {1}".format(phase, decoding[prediction[0]]))
     return prediction
 
 # ---------------- Finding Object to crop it -----------------------------
@@ -43,21 +46,35 @@ def binMask(img):
     #cv2.imshow('Contourned', img)
 
     hull = []
+    hull_areas = []
     for c in cnts:
+        area = cv2.contourArea(c)
         hull.append(cv2.convexHull(c))
+        hull_areas.append(int(area))
+        #print("hull: {0}\n".format(hull))
 
-        print("hull: {0}\n".format(hull))
-
-    print("hull len: {0}\n".format(len(hull)))
+    print("hull len: {0}".format(len(hull)))
+    print("hull areas: ", hull_areas)
+    cropped = []
     img_hull = img.copy()
-    cv2.drawContours(img_hull, [hull[1]], 0, (0, 0, 0), -1)
-    cv2.imshow('Convex Hull', img_hull)
-    #cv2.waitKey(0)
 
+    if(len(hull) > 1):
+        sorted_hull_areas = hull_areas.copy()
+        sorted_hull_areas.sort(reverse=True)
+        hull_id = hull_areas.index(sorted_hull_areas[1])
+        print(sorted_hull_areas)
+        print(hull_id)
+        cv2.drawContours(img_hull, [hull[hull_id]], 0, (0, 0, 0), -1)
+    else:
+        cv2.drawContours(img_hull, [hull[0]], 0, (0, 0, 0), -1)
+
+    
+    cv2.imshow('Convex Hull', img_hull)
+
+    
     cropped = cv2.bitwise_xor(img, img_hull)
     cv2.imshow("XOR", cropped)
-    cv2.waitKey(0)    
-
+    cv2.waitKey(0)
     return cropped
 #----------------- Histograma RGB -----------------------------
 def histogram(img):
@@ -159,7 +176,7 @@ def main(sourcepath, outputpath):
                 print('Could not open or find the images')
                 exit(0)
 
-            detector = binClassifier(img.copy())
+            detector = binClassifier('Full image', img.copy())
             if(detector):
                 cropped = binMask(img.copy())
                 cv2.imwrite(outputpath + str(count) + ".jpg" , cropped)
@@ -172,11 +189,11 @@ def main(sourcepath, outputpath):
             else:
                 print("No se han encontrado similitudes")
                 print("pasando al siguiente...")
-        print("siguiente imagen...")
+        #print("siguiente imagen...")
     print("finalizado, dataset limpio")
 
 main('../Captured images/Second Try Dataset (green banana)/', './Cleared images/Green banana/')
-#main('../Captured images/Third Try Dataset (green segment)/', './Cleared images/Green segment/')
-#main('../Captured images/Fifth Try (green segment without ventilation)/', './Cleared images/Green segment (no ventilation)/')
+main('../Captured images/Third Try Dataset (green segment)/', './Cleared images/Green segment/')
+
 
 
