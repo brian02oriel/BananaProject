@@ -69,12 +69,12 @@ def binMask(img):
         cv2.drawContours(img_hull, [hull[0]], 0, (0, 0, 0), -1)
 
     
-    cv2.imshow('Convex Hull', img_hull)
+    #cv2.imshow('Convex Hull', img_hull)
 
     
     cropped = cv2.bitwise_xor(img, img_hull)
-    cv2.imshow("XOR", cropped)
-    cv2.waitKey(0)
+    #cv2.imshow("XOR", cropped)
+    #cv2.waitKey(0)
     return cropped
 #----------------- Histograma RGB -----------------------------
 def histogram(img):
